@@ -1,52 +1,46 @@
-let { Storage } = require('@google-cloud/storage');
+const fs = require('fs');
+const { Storage } = require('@google-cloud/storage');
 
-exports.init = ({ bucket }) => {
+exports.init = ({ bucket, mock }) => {
 
-  let storage = new Storage();
+  if(mock === true) {
 
-  exports.upload = async (remotePath, localPath, contentType) {
-    await storage.bucket(bucket)
-        .upload(localPath, {
-          destination: remotePath,
-          metadata: { contentType: contentType }
-        });
-  }
+    exports.createReadStream = (remotePath) {
+      fs.createReadStream(`@storage/${ bucket }/${ remotePath }`);
+    }
 
-  exports.download = async (remotePath, localPath) {
-    await storage.bucket(bucket)
-        .file(remotePath)
-        .download({ destination: localPath });
+  } else {
+
+    const storage = new Storage();
+
+    exports.createReadStream = (remotePath) {
+      storage.bucket(bucket)
+          .file(remotePath)
+          .createReadStream();
+    }
+
+    exports.upload = async (remotePath, localPath, contentType) {
+      await storage.bucket(bucket)
+          .upload(localPath, {
+            destination: remotePath,
+            metadata: { contentType: contentType }
+          });
+    }
+
+    exports.download = async (remotePath, localPath) {
+      await storage.bucket(bucket)
+          .file(remotePath)
+          .download({ destination: localPath });
+    }
+
+    exports.delete(remotePath) {
+      return await storage.bucket(bucket)
+          .file(remotePath)
+          .delete();
+    }
+
   }
 
   delete exports.init;
 
 };
-
-
-
-/*
-
-class Storage {
-
-  async save(buffer, contentType, filePath) {
-    return await new Promise((resolve, reject) => {
-      storage
-          .bucket(this.bucket)
-          .file(filePath)
-          .createWriteStream({ metadata: { contentType: contentType } })
-          .on('finish', resolve)
-          .on('error', (e) => reject(e))
-          .end(buffer);
-    });
-  }
-
-  async delete(filePath) {
-    return await storage
-        .bucket(this.bucket)
-        .file(filePath)
-        .delete();
-  }
-
-}
-
-*/
