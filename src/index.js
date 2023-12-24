@@ -5,21 +5,30 @@ exports.init = ({ bucket, mock }) => {
 
   if(mock === true) {
 
-    exports.createReadStream = (remotePath) {
-      fs.createReadStream(`@storage/${ bucket }/${ remotePath }`);
+    exports.sync = async (remotePath) => {
+      return `@storage/${ bucket }/${ remotePath }`;
     }
 
   } else {
 
     const storage = new Storage();
 
-    exports.createReadStream = (remotePath) {
+    exports.sync = async (remotePath) => {
+      let localPath = `@storage/${ bucket }/${ remotePath }`;
+      if(!fs.existsSync(localPath))
+        await storage.bucket(bucket)
+            .file(remotePath)
+            .download({ destination: localPath });
+      return localPath;
+    }
+
+    exports.createReadStream = (remotePath) => {
       storage.bucket(bucket)
           .file(remotePath)
           .createReadStream();
     }
 
-    exports.upload = async (remotePath, localPath, contentType) {
+    exports.upload = async (remotePath, localPath, contentType) => {
       await storage.bucket(bucket)
           .upload(localPath, {
             destination: remotePath,
@@ -27,13 +36,7 @@ exports.init = ({ bucket, mock }) => {
           });
     }
 
-    exports.download = async (remotePath, localPath) {
-      await storage.bucket(bucket)
-          .file(remotePath)
-          .download({ destination: localPath });
-    }
-
-    exports.delete(remotePath) {
+    exports.delete = async (remotePath) => {
       return await storage.bucket(bucket)
           .file(remotePath)
           .delete();
