@@ -1,7 +1,7 @@
 {
   "author": "Shivang Gupta, Zero65 Technologies Pvt. Ltd.",
   "name": "@zero65tech/storage",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "Google Cloud Storage Toolkit",
   "license": "MIT",
   "repository": {
@@ -19,7 +19,9 @@
     "test": "jest --coverage --testPathPattern=test/",
     "lint": "npx eslint --fix src test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@google-cloud/storage": "7.7.x"
+  },
   "devDependencies": {
     "eslint": "8.54.x",
     "jest": "29.7.x"
