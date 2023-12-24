@@ -1,40 +1,32 @@
-const storage = new (require('@google-cloud/storage').Storage)();
+let { Storage } = require('@google-cloud/storage');
 
-const BUCKET = {
-  alpha   : {
-    image: 'bolo-live_image',
-    video: 'bolo-live_video',
-    agora: 'bolo-live_agora'
-  },
-  beta    : {
-    image: 'bolo-live_image',
-    video: 'bolo-live_video',
-    agora: 'bolo-live_agora'
-  },
-  gamma   : {
-    image: 'bolo-live_image_asia-south1',
-    video: 'bolo-live_video_asia-south1',
-    agora: 'bolo-live_agora_asia-south1'
-  },
-  offline : {
-    image: 'bolo-live_image_asia-south1',
-    video: 'bolo-live_video_asia-south1',
-    agora: 'bolo-live_agora_asia-south1'
-  },
-  prod    : {
-    image: 'bolo-live_image_asia-south1',
-    video: 'bolo-live_video_asia-south1',
-    agora: 'bolo-live_agora_asia-south1'
-  },
-}[process.env.NODE_ENV][process.env.npm_package_name];
+exports.init = ({ bucket }) => {
+
+  let storage = new Storage();
+
+  exports.upload = async (remotePath, localPath, contentType) {
+    await storage.bucket(bucket)
+        .upload(localPath, {
+          destination: remotePath,
+          metadata: { contentType: contentType }
+        });
+  }
+
+  exports.download = async (remotePath, localPath) {
+    await storage.bucket(bucket)
+        .file(remotePath)
+        .download({ destination: localPath });
+  }
+
+  delete exports.init;
+
+};
 
 
+
+/*
 
 class Storage {
-
-  constructor(bucket) {
-    this.bucket = bucket || BUCKET;
-  }
 
   async save(buffer, contentType, filePath) {
     return await new Promise((resolve, reject) => {
@@ -48,17 +40,6 @@ class Storage {
     });
   }
 
-  async upload(file, contentType, dest) {
-    return await storage.bucket(this.bucket).upload(file, {
-      destination: dest,
-      metadata: { contentType: contentType }
-    });
-  }
-
-  async download(file, dest) {
-    await storage.bucket(this.bucket).file(file).download({ destination: dest });
-  }
-
   async delete(filePath) {
     return await storage
         .bucket(this.bucket)
@@ -68,4 +49,4 @@ class Storage {
 
 }
 
-module.exports = Storage;
+*/

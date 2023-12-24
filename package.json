@@ -1,7 +1,7 @@
 {
   "author": "Shivang Gupta, Zero65 Technologies Pvt. Ltd.",
   "name": "@zero65tech/storage",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Google Cloud Storage Toolkit",
   "license": "MIT",
   "repository": {
