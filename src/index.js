@@ -1,12 +1,36 @@
 const fs = require('fs');
 const { Storage } = require('@google-cloud/storage');
 
+
+
+async function ensureLocalPathDir(localPath) {
+  let i = localPath.lastIndexOf('/');
+  if(i != -1) {
+    let dir = localPath.substring(0, i);
+    if(!fs.existsSync(dir))
+      await fs.promises.mkdir(dir, { recursive: true });
+  }
+}
+
+
+
 exports.init = ({ bucket, mock }) => {
 
   if(mock === true) {
 
     exports.sync = async (remotePath) => {
       return `@storage/${ bucket }/${ remotePath }`;
+    }
+
+    exports.readFile = async (remotePath) => {
+      let localPath = `@storage/${ bucket }/${ remotePath }`;
+      return await fs.promises.readFile(localPath);
+    }
+
+    exports.writeFile = async (remotePath, data) => {
+      let localPath = `@storage/${ bucket }/${ remotePath }`;
+      await ensureLocalPathDir(localPath);
+      return await fs.promises.writeFile(localPath, data);
     }
 
   } else {
