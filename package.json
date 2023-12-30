@@ -14,13 +14,17 @@
     "zero65",
     "zero65-tech"
   ],
-  "main": "src/index.js",
+  "main": "main.js",
   "scripts": {
+    "start": "node main.js",
     "test": "jest --coverage --testPathPattern=test/",
     "lint": "npx eslint --fix src test"
   },
   "dependencies": {
-    "@google-cloud/storage": "7.7.x"
+    "@google-cloud/storage": "7.7.x",
+    "@zero65/config": "2.0.x",
+    "cors": "^2.8.5",
+    "express": "4.18.x"
   },
   "devDependencies": {
     "eslint": "8.54.x",
