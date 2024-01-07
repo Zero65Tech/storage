@@ -1,1 +1,1 @@
-gcloud storage file
+This line is written while using writeStream

@@ -16,7 +16,7 @@
   ],
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
+    "start": "nodemon main.js",
     "test": "jest --coverage --testPathPattern=test/",
     "lint": "npx eslint --fix src test"
   },
@@ -47,5 +47,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "nodemonConfig": {
+    "verbose": false,
+    "ignore": [],
+    "delay": "100"
   }
 }
