@@ -37,10 +37,12 @@ exports.init = ({ bucket, mock }) => {
       return fs.createReadStream(localPath);
     }
 
-    exports.createWriteStream = (remotePath) => {
+    exports.createWriteStream = (remotePath, data) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
-      return fs.createWriteStream(localPath);
+      const writeStream = fs.createWriteStream(localPath);
+      writeStream.write(data);
+      writeStream.end();
     }
 
   } else {
@@ -51,7 +53,7 @@ exports.init = ({ bucket, mock }) => {
     });
 
     exports.readFile = async (remotePath) => {
-      let localPath = `@storage/${ bucket }/${ remotePath }`;
+      let localPath = local(remotePath);
       if(!fs.existsSync(localPath))
         await storage.bucket(bucket)
             .file(remotePath)
@@ -63,37 +65,36 @@ exports.init = ({ bucket, mock }) => {
     exports.writeFile = async (remotePath, data) => {
       let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
-      await fs.promises.writeFile(localPath, data);
 
-      exports.upload(remotePath, localPath, 'text/plain')
+      await Promise.all([
+        fs.promises.writeFile(localPath, data),
+        exports.upload(remotePath, localPath, 'text/plain')
+      ]);
+
       return `File Updated at ${ localPath }`
     }
 
-    exports.createReadStream = (remotePath) => {
-      const readStream = storage.bucket(bucket)
-          .file(remotePath)
-          .createReadStream();
+    exports.createReadStream = async (remotePath) => {
+      let localPath = local(remotePath);
+      if(!fs.existsSync(localPath))
+        await storage.bucket(bucket)
+            .file(remotePath)
+            .download({ destination: localPath });
 
-      let data = '';
-      readStream.on('data', (chunk) => {
-        data += chunk.toString();
-      });
-
-      return data;
+      return fs.createReadStream(localPath);
     }
 
-    exports.createWriteStream = (remotePath, data) => {
+    exports.createWriteStream = async (remotePath, data) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
 
-      const writeStream = storage.bucket(bucket)
-          .file(remotePath)
-          .createReadStream();
-          
-      writeStream.write(data);
-      writeStream.end();
+      const writeStream = fs.createWriteStream(localPath);
 
-      return fs.createWriteStream(localPath);
+      await Promise.all([
+        writeStream.write(data),
+        exports.upload(remotePath, localPath, 'text/plain')
+      ]);
+      writeStream.end();
     }
 
     exports.upload = async (remotePath, localPath, contentType) => {
@@ -105,10 +106,17 @@ exports.init = ({ bucket, mock }) => {
     }
 
     exports.delete = async (remotePath) => {
-      return await storage.bucket(bucket)
-          .file(remotePath)
-          .delete();
+      let localPath = local(remotePath);
+
+      await Promise.all([
+        fs.promises.unlink(localPath),
+        storage.bucket(bucket)
+        .file(remotePath)
+        .delete()
+      ]);
     }
+
+    return 'File Deleted';
   }
 
   delete exports.init;
