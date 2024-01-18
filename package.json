@@ -16,7 +16,6 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "start": "node main.js",
     "test": "jest --coverage --testPathPattern=test/",
     "lint": "npx eslint --fix src test"
   },
@@ -25,22 +24,11 @@
   },
   "devDependencies": {
     "eslint": "8.54.x",
-    "jest": "29.7.x"
+    "jest": "29.7.x",
+    "@zero65tech/eslint-config-zero65": "https://github.com/Zero65Tech/eslint-config.git"
   },
   "eslintConfig": {
-    "env": {
-      "es2021": true,
-      "jest": true,
-      "node": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": "latest"
-    },
-    "rules": {
-      "no-constant-condition": "warn",
-      "no-useless-escape": "warn"
-    }
+    "extends": "@zero65tech/eslint-config-zero65"
   },
   "publishConfig": {
     "access": "public"
