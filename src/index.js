@@ -21,23 +21,23 @@ exports.init = ({ bucket, mock }) => {
   if(mock === true) {
 
     exports.readFile = async(remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       return await fs.promises.readFile(localPath);
     };
 
     exports.writeFile = async(remotePath, data) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
       await fs.promises.writeFile(localPath, data);
     };
 
     exports.createReadStream = (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       return fs.createReadStream(localPath);
     };
 
     exports.createWriteStream = (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
       return fs.createWriteStream(localPath);
     };
