@@ -1,5 +1,5 @@
 {
-  "author": "Shivang Gupta, Zero65 Technologies Pvt. Ltd.",
+  "author": "Jai Gupta, Zero65 Technologies Pvt. Ltd.",
   "name": "@zero65tech/storage",
   "version": "0.0.7",
   "description": "Google Cloud Storage Toolkit",
@@ -17,29 +17,18 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage --testPathPattern=test/",
-    "lint": "npx eslint --fix src test"
+    "lint": "npx eslint --fix ."
   },
   "dependencies": {
     "@google-cloud/storage": "7.7.x"
   },
   "devDependencies": {
+    "@zero65tech/eslint-config": "2.0.x",
     "eslint": "8.54.x",
     "jest": "29.7.x"
   },
   "eslintConfig": {
-    "env": {
-      "es2021": true,
-      "jest": true,
-      "node": true
-    },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-      "ecmaVersion": "latest"
-    },
-    "rules": {
-      "no-constant-condition": "warn",
-      "no-useless-escape": "warn"
-    }
+    "extends": "@zero65tech"
   },
   "publishConfig": {
     "access": "public"
