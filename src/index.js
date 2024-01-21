@@ -50,50 +50,49 @@ exports.init = ({ bucket, mock }) => {
       await storage.bucket(bucket)
           .upload(localPath, {
             destination: remotePath,
-            metadata: { contentType: contentType },
+            metadata: { contentType:contentType },
           });
     }
 
+    const download = async (remotePath, localPath) => {
+      await storage.bucket(bucket)
+          .file(remotePath)
+          .download({ destination:localPath });
+    }
+
     exports.readFile = async (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       if(!fs.existsSync(localPath))
-        await storage.bucket(bucket)
-            .file(remotePath)
-            .download({ destination: localPath });
+        await download(remotePath, localPath);
       return await fs.promises.readFile(localPath);
     };
 
-    exports.writeFile = async (remotePath, data) => {
-      const localPath = local(remotePath);
+    exports.writeFile = async (remotePath, data, contentType) => {
+      let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
-      await Promise.all([
-        fs.promises.writeFile(localPath, data),
-        upload(remotePath, localPath, 'text/plain'),
-      ]);
+      await fs.promises.writeFile(localPath, data);
+      await upload(remotePath, localPath, contentType);
     };
 
     exports.createReadStream = async (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       if(!fs.existsSync(localPath))
-        await storage.bucket(bucket)
-            .file(remotePath)
-            .download({ destination: localPath });
+        await download(remotePath, localPath);
       return fs.createReadStream(localPath);
     };
 
+    // FIX: Return write stream to GCS or Upload to GCS on write
     exports.createWriteStream = async (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
       return fs.createWriteStream(localPath);
     };
 
     exports.delete = async (remotePath) => {
-      const localPath = local(remotePath);
+      let localPath = local(remotePath);
       await Promise.all([
         fs.unlink(localPath),
-        storage.bucket(bucket)
-            .file(remotePath)
-            .delete(),
+        storage.bucket(bucket).file(remotePath).delete(),
       ]);
     };
     
