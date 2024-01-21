@@ -48,22 +48,22 @@ exports.init = ({ bucket, mock }) => {
 
     async function upload(remotePath, localPath, contentType) {
       await storage.bucket(bucket)
-        .upload(localPath, {
-          destination: remotePath,
-          metadata: { contentType: contentType },
-        });
+          .upload(localPath, {
+            destination: remotePath,
+            metadata: { contentType: contentType },
+          });
     }
 
-    exports.readFile = async(remotePath) => {
+    exports.readFile = async (remotePath) => {
       const localPath = local(remotePath);
       if(!fs.existsSync(localPath))
         await storage.bucket(bucket)
-          .file(remotePath)
-          .download({ destination: localPath });
+            .file(remotePath)
+            .download({ destination: localPath });
       return await fs.promises.readFile(localPath);
     };
 
-    exports.writeFile = async(remotePath, data) => {
+    exports.writeFile = async (remotePath, data) => {
       const localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
       await Promise.all([
@@ -72,28 +72,28 @@ exports.init = ({ bucket, mock }) => {
       ]);
     };
 
-    exports.createReadStream = async(remotePath) => {
+    exports.createReadStream = async (remotePath) => {
       const localPath = local(remotePath);
       if(!fs.existsSync(localPath))
         await storage.bucket(bucket)
-          .file(remotePath)
-          .download({ destination: localPath });
+            .file(remotePath)
+            .download({ destination: localPath });
       return fs.createReadStream(localPath);
     };
 
-    exports.createWriteStream = async(remotePath) => {
+    exports.createWriteStream = async (remotePath) => {
       const localPath = local(remotePath);
       ensureLocalPathDir(localPath);
       return fs.createWriteStream(localPath);
     };
 
-    exports.delete = async(remotePath) => {
+    exports.delete = async (remotePath) => {
       const localPath = local(remotePath);
       await Promise.all([
         fs.unlink(localPath),
         storage.bucket(bucket)
-          .file(remotePath)
-          .delete(),
+            .file(remotePath)
+            .delete(),
       ]);
     };
     

@@ -1,4 +1,4 @@
-(async() => {
+(async () => {
 
   const storage = require('../src/index2');
 
