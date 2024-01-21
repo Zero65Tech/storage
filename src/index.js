@@ -86,11 +86,18 @@ exports.init = ({ bucket, mock }) => {
       return fs.createReadStream(localPath);
     };
 
-    // FIX: Upload to GCS once stream is closed.
     exports.createWriteStream = async (remotePath) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
-      return fs.createWriteStream(localPath);
+
+      const writeStream = fs.createWriteStream(localPath);
+      const originalEnd = writeStream.end;
+      writeStream.end = async function (chunk, encoding, callback) {
+        originalEnd.call(this, chunk, encoding, callback);
+        await upload(remotePath, localPath, 'text/plain');
+      };
+
+      return writeStream;
     };
 
     exports.delete = async (remotePath) => {
