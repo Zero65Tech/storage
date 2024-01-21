@@ -67,7 +67,6 @@ exports.init = ({ bucket, mock }) => {
       return await fs.promises.readFile(localPath);
     };
 
-    // FIX: Just upload data to GCS. Do not save locally.
     exports.writeFile = async (remotePath, data, contentType) => {
       let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
@@ -82,7 +81,7 @@ exports.init = ({ bucket, mock }) => {
       return fs.createReadStream(localPath);
     };
 
-    // FIX: Return write stream to GCS. Do not save locally.
+    // FIX: Upload to GCS once stream is closed.
     exports.createWriteStream = async (remotePath) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
@@ -91,10 +90,10 @@ exports.init = ({ bucket, mock }) => {
 
     exports.delete = async (remotePath) => {
       let localPath = local(remotePath);
-      await storage.bucket(bucket)
-          .file(remotePath)
-          .delete();
-      fs.unlinkSync(localPath);
+      await Promise.all([
+        storage.bucket(bucket).file(remotePath).delete(),
+        fs.promises.unlink(localPath)
+      ]);
     };
     
   }
