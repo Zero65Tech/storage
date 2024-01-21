@@ -6,7 +6,7 @@ const { Storage } = require('@google-cloud/storage');
 exports.init = ({ bucket, mock }) => {
 
   function local(remotePath) {
-    return `@storage/${ bucket }/${ remotePath }`;
+    return `@storage/${ bucket }/${ remotePath }`
   }
 
   async function ensureLocalPathDir(localPath) {
@@ -28,7 +28,7 @@ exports.init = ({ bucket, mock }) => {
     exports.writeFile = async (remotePath, data) => {
       let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
-      await fs.promises.writeFile(localPath, data);
+      return await fs.promises.writeFile(localPath, data);
     }
 
     exports.createReadStream = (remotePath) => {
