@@ -56,24 +56,16 @@ exports.init = ({ bucket, mock }) => {
 
     exports.readFile = async(remotePath) => {
       const localPath = local(remotePath);
-      if(!fs.existsSync(localPath)) {
-        try {
-          await storage.bucket(bucket)
-            .file(remotePath)
-            .download({ destination: localPath });
-        } catch(error) {
-          if(error.code === 404) console.error('File Not Found');
-          else console.error('Error reading file', error);
-        }
-      }
-
+      if(!fs.existsSync(localPath))
+        await storage.bucket(bucket)
+          .file(remotePath)
+          .download({ destination: localPath });
       return await fs.promises.readFile(localPath);
     };
 
     exports.writeFile = async(remotePath, data) => {
       const localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
-
       await Promise.all([
         fs.promises.writeFile(localPath, data),
         upload(remotePath, localPath, 'text/plain'),
@@ -86,32 +78,25 @@ exports.init = ({ bucket, mock }) => {
         await storage.bucket(bucket)
           .file(remotePath)
           .download({ destination: localPath });
-
       return fs.createReadStream(localPath);
     };
 
     exports.createWriteStream = async(remotePath) => {
       const localPath = local(remotePath);
       ensureLocalPathDir(localPath);
-
       return fs.createWriteStream(localPath);
     };
 
     exports.delete = async(remotePath) => {
-      try {
-        const localPath = local(remotePath);
-
-        await Promise.all([
-          fs.unlink(localPath),
-          storage.bucket(bucket)
-            .file(remotePath)
-            .delete(),
-        ]);
-
-      } catch (error) {
-        console.error('Error deleting file:', error);
-      }
+      const localPath = local(remotePath);
+      await Promise.all([
+        fs.unlink(localPath),
+        storage.bucket(bucket)
+          .file(remotePath)
+          .delete(),
+      ]);
     };
+    
   }
 
   delete exports.init;
