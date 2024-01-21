@@ -10,9 +10,9 @@ exports.init = ({ bucket, mock }) => {
   }
 
   async function ensureLocalPathDir(localPath) {
-    const i = localPath.lastIndexOf('/');
-    if(i !== -1) {
-      const dir = localPath.substring(0, i);
+    let i = localPath.lastIndexOf('/');
+    if(i != -1) {
+      let dir = localPath.substring(0, i);
       if(!fs.existsSync(dir))
         await fs.promises.mkdir(dir, { recursive: true });
     }
@@ -20,27 +20,27 @@ exports.init = ({ bucket, mock }) => {
 
   if(mock === true) {
 
-    exports.readFile = async(remotePath) => {
+    exports.readFile = async (remotePath) => {
       let localPath = local(remotePath);
       return await fs.promises.readFile(localPath);
-    };
+    }
 
-    exports.writeFile = async(remotePath, data) => {
+    exports.writeFile = async (remotePath, data) => {
       let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
       await fs.promises.writeFile(localPath, data);
-    };
+    }
 
     exports.createReadStream = (remotePath) => {
       let localPath = local(remotePath);
       return fs.createReadStream(localPath);
-    };
+    }
 
     exports.createWriteStream = (remotePath) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
       return fs.createWriteStream(localPath);
-    };
+    }
 
   } else {
 
