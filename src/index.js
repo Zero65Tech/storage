@@ -25,10 +25,10 @@ exports.init = ({ bucket, mock }) => {
       return await fs.promises.readFile(localPath);
     }
 
-    exports.writeFile = async (remotePath, data) => {
+    exports.writeFile = async (remotePath, data, contentType) => {
       let localPath = local(remotePath);
       await ensureLocalPathDir(localPath);
-      return await fs.promises.writeFile(localPath, data);
+      await fs.promises.writeFile(localPath, data);
     }
 
     exports.createReadStream = (remotePath) => {
@@ -42,6 +42,11 @@ exports.init = ({ bucket, mock }) => {
       return fs.createWriteStream(localPath);
     }
 
+    exports.delete = async (remotePath) => {
+      let localPath = local(remotePath);
+      await fs.promises.unlink(localPath);
+    };
+    
   } else {
 
     const storage = new Storage();
