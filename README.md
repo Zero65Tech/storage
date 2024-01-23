@@ -27,10 +27,10 @@ During initialization, users can set the "mock" flag to either true or false:
 Initialize the utility with the desired configuration, including the GCS bucket and the mock flag:
 
 ```javascript
-const storageUtility = require('path-to-storage-utility');
+const storage = require('@zero65tech/storage');
 
 // Mock Mode (Local FS Only)
-storageUtility.init({ bucket: 'your-gcs-bucket-name', mock: true });
+storage.init({ bucket: 'your-gcs-bucket-name', mock: true });
 
 // Non-Mock Mode (Both Local FS and GCS)
-storageUtility.init({ bucket: 'your-gcs-bucket-name', mock: false });
+storage.init({ bucket: 'your-gcs-bucket-name', mock: false });
