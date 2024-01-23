@@ -36,6 +36,7 @@ storage.init({
 });
 
 // OR
+
 // Non-Mock Mode (Both Local FS and GCS)
 storage.init({
   bucket: 'your-gcs-bucket-name',
