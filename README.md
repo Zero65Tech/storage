@@ -56,19 +56,19 @@ const fileData = await storage.readFile('path/to/your/file.txt');
 
 ```javascript
 const data = 'This is the content of the file.';
-await storageUtility.writeFile('path/to/your/file.txt', data, 'text/plain');
+await storage.writeFile('path/to/your/file.txt', data, 'text/plain');
 ```
 
 #### Creating Read and Write Streams
 
 ```javascript
-const readStream = storageUtility.createReadStream('path/to/your/file.txt');
-const writeStream = storageUtility.createWriteStream('path/to/your/file.txt', 'text/plain');
+const readStream = storage.createReadStream('path/to/your/file.txt');
+const writeStream = storage.createWriteStream('path/to/your/file.txt', 'text/plain');
 ```
 
 #### Deleting a File
 
 ```javascript
-await storageUtility.delete('path/to/your/file.txt');
+await storage.delete('path/to/your/file.txt');
 ```
 
