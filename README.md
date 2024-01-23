@@ -34,3 +34,35 @@ storage.init({ bucket: 'your-gcs-bucket-name', mock: true });
 
 // Non-Mock Mode (Both Local FS and GCS)
 storage.init({ bucket: 'your-gcs-bucket-name', mock: false });
+```
+
+### File Operations
+
+Once initialized, you can perform various file operations using the utility:
+
+#### Reading a File
+
+```javascript
+const fileData = await storage.readFile('path/to/your/file.txt');
+```
+
+#### Writing a File
+
+```javascript
+const data = 'This is the content of the file.';
+await storageUtility.writeFile('path/to/your/file.txt', data, 'text/plain');
+```
+
+#### Creating Read and Write Streams
+
+```javascript
+const readStream = storageUtility.createReadStream('path/to/your/file.txt');
+const writeStream = storageUtility.createWriteStream('path/to/your/file.txt', 'text/plain');
+```
+
+#### Deleting a File
+
+```javascript
+await storageUtility.delete('path/to/your/file.txt');
+```
+
