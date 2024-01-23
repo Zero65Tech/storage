@@ -30,10 +30,16 @@ Initialize the utility with the desired configuration, including the GCS bucket 
 const storage = require('@zero65tech/storage');
 
 // Mock Mode (Local FS Only)
-storage.init({ bucket: 'your-gcs-bucket-name', mock: true });
+storage.init({
+  bucket: 'your-gcs-bucket-name',
+  mock: true
+});
 
 // Non-Mock Mode (Both Local FS and GCS)
-storage.init({ bucket: 'your-gcs-bucket-name', mock: false });
+storage.init({
+  bucket: 'your-gcs-bucket-name',
+  mock: false
+});
 ```
 
 ### File Operations
