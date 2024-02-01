@@ -97,6 +97,29 @@ exports.init = ({ bucket, mock }) => {
       });
     };
 
+    exports.signedURLWrite = async (remotePath, data, contentType) => {
+
+      const options = {
+        action: 'write',
+        expires: Date.now() + 1 * 60 * 1000, // 1 minute
+      };
+    
+      file.getSignedUrl(options, async (err, url) => {
+
+          console.log('Signed URL:', url);
+
+          let localPath = local(remotePath);
+          await ensureLocalPathDir(localPath);
+          await fs.promises.writeFile(localPath, data);
+  
+          axios.put(url, localPath, {
+            headers: {
+              'Content-Type': contentType,
+            },
+          });
+        });
+    }
+
     exports.delete = async (remotePath) => {
       let localPath = local(remotePath);
       await Promise.all([
