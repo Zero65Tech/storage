@@ -87,9 +87,6 @@ exports.init = ({ bucket, mock }) => {
     };
 
     exports.createWriteStream = (remotePath, contentType) => {
-      let localPath = local(remotePath);
-      ensureLocalPathDir(localPath);
-      
       return storage.bucket(bucket).file(remotePath).createWriteStream({
         metadata: {
           contentType: contentType,
@@ -97,27 +94,17 @@ exports.init = ({ bucket, mock }) => {
       });
     };
 
-    exports.signedURLWrite = async (remotePath, data, contentType) => {
-
+    exports.getSignedURL = async (time) => {
       const options = {
         action: 'write',
-        expires: Date.now() + 1 * 60 * 1000, // 1 minute
+        expires: Date.now() + time * 60 * 1000, 
       };
     
-      file.getSignedUrl(options, async (err, url) => {
-
-          console.log('Signed URL:', url);
-
-          let localPath = local(remotePath);
-          await ensureLocalPathDir(localPath);
-          await fs.promises.writeFile(localPath, data);
-  
-          axios.put(url, localPath, {
-            headers: {
-              'Content-Type': contentType,
-            },
-          });
-        });
+      const [url] = await storage.bucket(bucket)
+                        .file('zeroByte.txt')
+                        .getSignedUrl(options);
+                        
+      return url;
     }
 
     exports.delete = async (remotePath) => {
