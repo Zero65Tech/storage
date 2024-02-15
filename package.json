@@ -1,7 +1,7 @@
 {
   "author": "Jai Gupta, Zero65 Technologies Pvt. Ltd.",
   "name": "@zero65tech/storage",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Google Cloud Storage Toolkit",
   "license": "MIT",
   "repository": {

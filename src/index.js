@@ -36,7 +36,7 @@ exports.init = ({ bucket, mock }) => {
       return fs.createReadStream(localPath);
     }
 
-    exports.createWriteStream = (remotePath) => {
+    exports.createWriteStream = (remotePath, contentType) => {
       let localPath = local(remotePath);
       ensureLocalPathDir(localPath);
       return fs.createWriteStream(localPath);
@@ -55,7 +55,7 @@ exports.init = ({ bucket, mock }) => {
       await storage.bucket(bucket)
           .upload(localPath, {
             destination: remotePath,
-            metadata: { contentType:contentType },
+            metadata: { contentType },
           });
     }
 
@@ -86,12 +86,18 @@ exports.init = ({ bucket, mock }) => {
       return fs.createReadStream(localPath);
     };
 
-    // FIX: Upload to GCS once stream is closed.
-    exports.createWriteStream = async (remotePath) => {
-      let localPath = local(remotePath);
-      ensureLocalPathDir(localPath);
-      return fs.createWriteStream(localPath);
+    exports.createWriteStream = (remotePath, contentType) => {
+      return storage.bucket(bucket)
+          .file(remotePath)
+          .createWriteStream({ metadata: { contentType } });
     };
+
+    exports.createWriteUrl = async (remotePath, expiry = 300) => {
+      let [url] = await storage.bucket(bucket)
+          .file(remotePath)
+          .getSignedUrl({ action: 'write', expires: Date.now() + expiry * 1000 });
+      return url;
+    }
 
     exports.delete = async (remotePath) => {
       let localPath = local(remotePath);
