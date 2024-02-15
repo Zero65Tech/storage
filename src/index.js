@@ -53,10 +53,7 @@ exports.init = ({ bucket, mock }) => {
 
     const upload = async (remotePath, localPath, contentType) => {
       await storage.bucket(bucket)
-          .upload(localPath, {
-            destination: remotePath,
-            metadata: { contentType },
-          });
+          .upload(localPath, { destination: remotePath, metadata: { contentType } });
     }
 
     const download = async (remotePath, localPath) => {
