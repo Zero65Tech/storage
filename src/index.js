@@ -55,7 +55,7 @@ exports.init = ({ bucket, mock }) => {
       await storage.bucket(bucket)
           .upload(localPath, {
             destination: remotePath,
-            metadata: { contentType:contentType },
+            metadata: { contentType },
           });
     }
 
@@ -87,23 +87,15 @@ exports.init = ({ bucket, mock }) => {
     };
 
     exports.createWriteStream = (remotePath, contentType) => {
-      return storage.bucket(bucket).file(remotePath).createWriteStream({
-        metadata: {
-          contentType: contentType,
-        },
-      });
+      return storage.bucket(bucket)
+          .file(remotePath)
+          .createWriteStream({ metadata: { contentType } });
     };
 
-    exports.getSignedURL = async (expiry) => {
-      const options = {
-        action: 'write',
-        expires: Date.now() + expiry * 60 * 1000, 
-      };
-    
-      const [url] = await storage.bucket(bucket)
-                        .file('zeroByte.txt')
-                        .getSignedUrl(options);
-                        
+    exports.createWriteUrl = async (remotePath, expiry = 300) => {
+      let [url] = await storage.bucket(bucket)
+          .file('zeroByte.txt')
+          .getSignedUrl({ action: 'write', expires: Date.now() + expiry * 1000 });
       return url;
     }
 
