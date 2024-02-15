@@ -94,7 +94,7 @@ exports.init = ({ bucket, mock }) => {
 
     exports.createWriteUrl = async (remotePath, expiry = 300) => {
       let [url] = await storage.bucket(bucket)
-          .file('zeroByte.txt')
+          .file(remotePath)
           .getSignedUrl({ action: 'write', expires: Date.now() + expiry * 1000 });
       return url;
     }
