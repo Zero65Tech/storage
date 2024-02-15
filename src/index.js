@@ -94,10 +94,10 @@ exports.init = ({ bucket, mock }) => {
       });
     };
 
-    exports.getSignedURL = async (time) => {
+    exports.getSignedURL = async (expiry) => {
       const options = {
         action: 'write',
-        expires: Date.now() + time * 60 * 1000, 
+        expires: Date.now() + expiry * 60 * 1000, 
       };
     
       const [url] = await storage.bucket(bucket)
